@@ -6,3 +6,9 @@ While utility for creating PRAW instances including OAuth information is include
 
 * Use `connect(...)` to retrieve an OAuth token and create a PRAW instance.
 * Use `get_oauth_token(...)` to retrieve an OAuth token.
+
+## Install
+
+    pip install praw-script-oauth
+
+Or [from the PyPI site](https://pypi.python.org/pypi/praw-script-oauth).
