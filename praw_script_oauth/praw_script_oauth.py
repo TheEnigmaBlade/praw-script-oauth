@@ -30,10 +30,11 @@ def connect(oauth_key, oauth_secret, username, password, oauth_redirect=_DEFAULT
 	if oauth_token is None:
 		return None
 	
-	r = praw.Reddit(user_agent=useragent)
+	r = praw.Reddit(user_agent=useragent, disable_update_check=True)
 	r.set_oauth_app_info(oauth_key, oauth_secret, oauth_redirect)
 	r.set_access_credentials(oauth_scopes, oauth_token)
 	r.config.api_request_delay = 1
+	return r
 
 def get_oauth_token(oauth_key, oauth_secret, username, password, useragent=_DEFAULT_USERAGENT, script_key=None):
 	"""
