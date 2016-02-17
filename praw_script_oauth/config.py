@@ -4,8 +4,8 @@ def read_config(config_file, config_dir="."):
 	path = os.path.join(config_dir, config_file)
 	try:
 		with open(path, "r") as f:
-			token = f.readline()
-			time = int(f.readline())
+			token = f.readline().strip()
+			time = int(f.readline().strip())
 			return token, time
 	except FileNotFoundError:
 		return None, 0
