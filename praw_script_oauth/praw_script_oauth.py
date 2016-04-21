@@ -1,6 +1,9 @@
-_DEFAULT_USERAGENT = "script:Default praw_script_oauth useragent:v0.1 (by /u/TheEnigmaBlade)"
+_DEFAULT_USERAGENT = "script:Default praw-script-oauth useragent:v0.1 (by /u/TheEnigmaBlade)"
 _DEFAULT_REDIRECT = "http://example.com/unused/redirect/uri"
 _TOKEN_LENGTH = 3600000 # 1 hr
+
+import logging
+log = logging.getLogger("praw-script-oauth")
 
 from time import time
 from .config import read_config, write_config
@@ -78,7 +81,7 @@ def _request_oauth_token(oauth_key, oauth_secret, username, password, useragent=
 	from requests.auth import HTTPBasicAuth
 	
 	try:
-		print("Requesting OAuth token")
+		log.debug("Requesting OAuth token")
 		# Make request
 		client_auth = HTTPBasicAuth(oauth_key, oauth_secret)
 		headers = {"User-Agent": useragent}
@@ -86,25 +89,25 @@ def _request_oauth_token(oauth_key, oauth_secret, username, password, useragent=
 		response = requests.post("https://www.reddit.com/api/v1/access_token", auth=client_auth, headers=headers, data=data)
 		if not response.ok:
 			# HTTP error code returned
-			print("OAuth error code {}: {}".format(response.status_code, response.reason))
+			log.error("OAuth error code {}: {}".format(response.status_code, response.reason))
 			return None
 		response_content = response.json()
 		if "error" in response_content and response_content["error"] != 200:
 			# Reddit error in returned response data
-			print("Received error: {}".format(response_content["error"]))
+			log.error("Response error: {}".format(response_content["error"]))
 			return None
 		
 		# Check token type (doesn't really need to be done, but for sanity)
 		token_type = response_content["token_type"]
 		if token_type != "bearer":
-			print("Received wrong type of token ({}), wtf reddit".format(token_type))
+			log.error("Received wrong type of token ({}), wtf reddit".format(token_type))
 			return None
 		
 		return response_content["access_token"]
 	
 	except Exception as e:
-		print("Failed to retrieve token: {}".format(e))
-		raise e
+		log.exception("Failed to retrieve token: {}".format(e))
+		return None
 
 # Utilities
 
