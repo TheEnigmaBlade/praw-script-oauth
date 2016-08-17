@@ -57,17 +57,17 @@ def get_oauth_token(oauth_key, oauth_secret, username, password, useragent=_DEFA
 	
 	:return: An OAuth token if one could be retrieved, otherwise None.
 	"""
-	token = _get_local_token(script_key)
+	token = _get_local_token(script_key, username)
 	if token is None:
 		token_time = _time_ms()
 		token = _request_oauth_token(oauth_key, oauth_secret, username, password, useragent=useragent)
-		write_config(token, token_time, _get_config_file(script_key))
+		write_config(token, token_time, _get_config_file(script_key, username))
 	return token
 
 # Token access
 
-def _get_local_token(script_key):
-	token, token_time = read_config(_get_config_file(script_key))
+def _get_local_token(script_key, username):
+	token, token_time = read_config(_get_config_file(script_key, username))
 	
 	current_time = _time_ms()
 	if (current_time - token_time) < _TOKEN_LENGTH:
@@ -111,8 +111,10 @@ def _request_oauth_token(oauth_key, oauth_secret, username, password, useragent=
 
 # Utilities
 
-def _get_config_file(script_key):
-	return "oauth_store{}.txt".format("_{}".format(script_key) if script_key is not None and len(script_key) > 0 else "")
+def _get_config_file(script_key, username):
+	key = "{}".format('_{}'.format(script_key) if script_key is not None and len(script_key) > 0 else "")
+	user = "{}".format('_{}'.format(username) if username is not None and len(username) > 0 else "")
+	return "oauth_store{}{}.txt".format(key, user)
 
 def _time_ms():
 	return int(time()*1000)
