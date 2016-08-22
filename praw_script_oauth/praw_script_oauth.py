@@ -1,4 +1,4 @@
-_DEFAULT_USERAGENT = "script:Default praw-script-oauth useragent:v0.1 (by /u/TheEnigmaBlade)"
+_DEFAULT_USERAGENT = "script:Default praw-script-oauth useragent:v0.1.3 (by /u/TheEnigmaBlade)"
 _DEFAULT_REDIRECT = "http://example.com/unused/redirect/uri"
 _TOKEN_LENGTH = 3600000 # 1 hr
 
@@ -31,6 +31,7 @@ def connect(oauth_key, oauth_secret, username, password, oauth_redirect=_DEFAULT
 	
 	oauth_token = get_oauth_token(oauth_key, oauth_secret, username, password, useragent=useragent, script_key=script_key)
 	if oauth_token is None:
+		log.debug("Can't create PRAW instance without token")
 		return None
 	
 	r = praw.Reddit(user_agent=useragent, disable_update_check=True)
@@ -112,8 +113,8 @@ def _request_oauth_token(oauth_key, oauth_secret, username, password, useragent=
 # Utilities
 
 def _get_config_file(script_key, username):
-	key = "{}".format('_{}'.format(script_key) if script_key is not None and len(script_key) > 0 else "")
-	user = "{}".format('_{}'.format(username) if username is not None and len(username) > 0 else "")
+	key = "_{}".format(script_key) if script_key is not None and len(script_key) > 0 else ""
+	user = "_{}".format(username) if username is not None and len(username) > 0 else ""
 	return "oauth_store{}{}.txt".format(key, user)
 
 def _time_ms():
